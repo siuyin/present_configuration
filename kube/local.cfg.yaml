@@ -1,0 +1,12 @@
+---
+cfg:
+  stage: "local"
+  hostPathNodeSelector: "minikube"
+  NFSServer: "192.168.99.1"  # host serving nfs shares
+  # NOTE: paths need to be manually created on the host prior to running
+  # kubectl apply -f vols.{stage}.yaml
+
+  drcFrontendName: "drc-frontend"
+  drcFrontendVer: "v27"
+
+  drcCleanAssetDBName: "drc-clean-asset-db"

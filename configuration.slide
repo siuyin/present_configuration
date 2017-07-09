@@ -1,0 +1,99 @@
+Configuring services and applications
+in Go
+9 Jul 2017
+
+Loh Siu Yin
+Technology Consultant, Beyond Broadcast LLP
+siuyin@beyondbroadcast.com
+
+* The Configuration challenge
+
+In a development environment:
+
+  "Hi there: I'm in the development environment."
+
+For production:
+
+  "Hi there: I'm in the production environment."
+
+For customer XYZ:
+
+  "Hi there: I'm in the XYZ environment."
+
+* flag: Go standard library package
+
+- Provides command line flags
+- Default values can be specified
+
+.play flag/main.go /010/,/020/
+
+* Demo:
+
+  go run flag/main.go
+  go run flag/main.go --env production
+  go run flag/main.go --env production --num-svr=3
+  go run flag/main.go -h
+
+* What do we do with sensitive data? Eg. Passwords
+
+- Should never be entered directly on the command line. 
+- ps and top listings will show password in cleartext.
+
+
+* Several solutions
+
+Solution 1: Use the environment.
+
+.play env/main.go /010/,/020/
+
+* Oops:
+
+  export PASSWD="MyP@sSW0rd" <-- in dev.secrets, production.secrets, XYZ.secrets
+  go run env/main.go
+
+Changes:
+
+- No need to specify command line flags
+- Lost the ability to specify a default value
+- No more built-in help with usage notes
+
+* I really like my default values
+
+  go get "github.com/siuyin/dflt"
+
+.play dflt/main.go /010/,/020/
+
+Demo:
+
+  go run dflt/main.go
+
+  unset PASSWD
+
+* dflt can also handle integers
+
+.play dfltInt/main.go /010/,/020/
+
+
+Demo:
+
+  NUM_SVR=a go run dfltInt/main.go
+
+* My problem with kubernetes config files
+
+.code kube/static.yaml
+
+* Go templates to the rescue
+
+  go install "github.com/siuyin/cfg-apply"
+
+.code kube/local.cfg.yaml
+
+* Demo
+
+  cd kube
+  less static.yaml
+  less local.cfg.yaml
+  less deploy.template.yaml
+
+  cfg-apply local.cfg.yaml deploy.template.yaml > local.deploy.yaml
+  cfg-apply prod.cfg.yaml  deploy.template.yaml > prod.deploy.yaml

@@ -1,0 +1,12 @@
+---
+cfg:
+  stage: "prod"
+  hostPathNodeSelector: "host-2"
+  NFSServer: "11.22.33.44"  # host serving nfs shares
+  # NOTE: paths need to be manually created on the host prior to running
+  # kubectl apply -f vols.{stage}.yaml
+
+  drcFrontendName: "drc-frontend"
+  drcFrontendVer: "v26"
+
+  drcCleanAssetDBName: "drc-clean-asset-db"

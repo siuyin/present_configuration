@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: "{{.cfg.drcFrontendName}}-{{.cfg.stage}}"
+    sys: "drc-{{.cfg.stage}}"
+  name: "{{.cfg.drcFrontendName}}-{{.cfg.stage}}"
+  namespace: default
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: "{{.cfg.drcFrontendName}}-{{.cfg.stage}}"
+  type: NodePort
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: "{{.cfg.drcFrontendName}}-{{.cfg.stage}}"
+  labels:
+    sys: "drc-{{.cfg.stage}}"
+spec:
+  replicas: 1 # tells deployment to run 1 pods matching the template
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: "{{.cfg.drcFrontendName}}-{{.cfg.stage}}"
+        sys: "drc-{{.cfg.stage}}"
+    spec:
+      containers:
+      - name: "{{.cfg.drcFrontendName}}-{{.cfg.stage}}"
+        image: "siuyin/{{.cfg.drcFrontendName}}:{{.cfg.drcFrontendVer}}"
+        env:
+        - name: STAGE
+          value: "{{.cfg.stage}}"
+        - name: NATS_SERVER
+          value: "nats://nats-{{.cfg.stage}}:4222"
+        - name: NATS_SUBJECT_SUBMISSION_INPUT
+          value: drc.submission.input
+        - name: NATS_SUBJECT_SUBMISSION_STATUS_REQUESTS
+          value: drc.submission-status.requests
+        - name: POLL_TRIES
+          value: "5"
+        - name: NATS_SUBJECT_DRC_LOGGER_REPORTER_SUBMISSIONS_LIST
+          value: "drc.logger-reporter.submissions.list"
+        - name: NATS_SUBJECT_DRC_LOGGER_REPORTER_SUBMISSIONS_GET
+          value: "drc.logger-reporter.submissions.get"
+        - name: CLEAN_ASSET_DB_SERVICE_HOST
+          value: "{{.cfg.drcCleanAssetDBName}}-{{.cfg.stage}}"
+        - name: CLEAN_ASSET_DB_SERVICE_PORT
+          value: "8080"
+        ports:
+        - containerPort: 8080
