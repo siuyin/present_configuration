@@ -84,9 +84,9 @@ Demo:
 
 * Go templates to the rescue
 
-  go install "github.com/siuyin/cfg-apply"
+  go get "github.com/siuyin/cfg-apply"
 
-.code kube/local.cfg.yaml
+.code kube/cfg.local.yaml
 
 * Demo
 
@@ -94,8 +94,8 @@ Demo:
 
   cd kube
   less static.yaml
-  less local.cfg.yaml
+  less cfg.local.yaml
   less deploy.template.yaml
 
-  cfg-apply local.cfg.yaml deploy.template.yaml > local.deploy.yaml
-  cfg-apply prod.cfg.yaml  deploy.template.yaml > prod.deploy.yaml
+  cfg-apply cfg.local.yaml deploy.template.yaml > deploy.local.yaml
+  cfg-apply cfg.prod.yaml  deploy.template.yaml > deploy.prod.yaml
